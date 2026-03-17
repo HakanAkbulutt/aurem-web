@@ -5127,12 +5127,24 @@ function initOnboarding(force) {
     nameInp.onfocus = function() {
       var obOrb = document.getElementById('ob-orb');
       if (obOrb) obOrb.style.display = 'none';
-      var step2 = document.getElementById('ob-step2');
-      if (step2) step2.classList.remove('active-input');
+      var ob = document.getElementById('onboarding');
+      if (ob) {
+        ob.style.justifyContent = 'flex-start';
+        ob.style.paddingTop = '60px';
+      }
+      var phone = document.querySelector('.phone');
+      if (phone) phone.style.overflow = 'visible';
     };
     nameInp.onblur = function() {
       var obOrb = document.getElementById('ob-orb');
       if (obOrb) obOrb.style.display = '';
+      var ob = document.getElementById('onboarding');
+      if (ob) {
+        ob.style.justifyContent = '';
+        ob.style.paddingTop = '';
+      }
+      var phone = document.querySelector('.phone');
+      if (phone) phone.style.overflow = '';
       if (nameInp._vpCleanup) { nameInp._vpCleanup(); nameInp._vpCleanup = null; }
     };
     nameInp.onkeydown = function(e) {
@@ -5391,7 +5403,36 @@ function obReturnNew() {
   obGoStep(2);
   setTimeout(function() {
     var inp = document.getElementById('ob-name-input');
+    var btn = document.getElementById('ob-name-btn');
     if (inp) { inp.value = ''; inp.focus(); }
+    if (btn) {
+      btn.onclick = function(e) {
+        e.stopPropagation();
+        var n = inp ? inp.value.trim() : '';
+        if (!n) { if (inp) inp.focus(); return; }
+        _obName = n;
+        var grEl = document.getElementById('ob-greeting-name');
+        if (grEl) grEl.textContent = (_t('ob_how_feel') || '{name}, şu an nasıl hissediyorsun?').replace('{name}', n);
+        obGoStep(3);
+      };
+    }
+    if (inp) {
+      inp.onkeydown = function(e) {
+        if (e.key === 'Enter' || e.keyCode === 13) { if (btn) btn.onclick(e); }
+      };
+      inp.onfocus = function() {
+        var obOrb = document.getElementById('ob-orb');
+        if (obOrb) obOrb.style.display = 'none';
+        var ob = document.getElementById('onboarding');
+        if (ob) { ob.style.justifyContent = 'flex-start'; ob.style.paddingTop = '60px'; }
+      };
+      inp.onblur = function() {
+        var obOrb = document.getElementById('ob-orb');
+        if (obOrb) obOrb.style.display = '';
+        var ob = document.getElementById('onboarding');
+        if (ob) { ob.style.justifyContent = ''; ob.style.paddingTop = ''; }
+      };
+    }
   }, 350);
 }
 
