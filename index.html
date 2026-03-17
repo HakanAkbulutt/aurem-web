@@ -5125,10 +5125,17 @@ function initOnboarding(force) {
   if (nameInp) {
     nameInp.onclick = function(e) { e.stopPropagation(); };
     nameInp.onfocus = function() {
+      // Hide orb on mobile to make room for keyboard
+      var obOrb = document.getElementById('ob-orb');
+      if (obOrb) obOrb.style.display = 'none';
       setTimeout(function() {
         var btn = document.getElementById('ob-name-btn');
-        if (btn) btn.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-      }, 400);
+        if (btn) btn.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }, 350);
+    };
+    nameInp.onblur = function() {
+      var obOrb = document.getElementById('ob-orb');
+      if (obOrb) obOrb.style.display = '';
     };
     nameInp.onkeydown = function(e) {
       if (e.key === 'Enter' || e.keyCode === 13) { if (nameBtn) nameBtn.onclick(e); }
