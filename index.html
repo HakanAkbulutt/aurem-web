@@ -1882,8 +1882,18 @@ body::before {
 /* ════════════════════════════════════════
    ONBOARDING
 ════════════════════════════════════════ */
-#onboarding {
-  position:absolute; inset:0; z-index:999;
+#ob-step2.active-input {
+  position: fixed !important;
+  bottom: 0; left: 0; right: 0;
+  background: linear-gradient(180deg,#FAF6F0 0%,#F5EDE4 100%);
+  padding: 30px 24px 40px;
+  z-index: 1000;
+  display: flex !important;
+  flex-direction: column;
+  align-items: center;
+  border-radius: 24px 24px 0 0;
+  box-shadow: 0 -8px 30px rgba(180,120,80,.1);
+}
   background: linear-gradient(180deg,#FAF6F0 0%,#F5EDE4 100%);
   display:flex; flex-direction:column;
   align-items:center; justify-content:center;
@@ -5127,29 +5137,14 @@ function initOnboarding(force) {
     nameInp.onfocus = function() {
       var obOrb = document.getElementById('ob-orb');
       if (obOrb) obOrb.style.display = 'none';
-      // Use visualViewport to reposition button above keyboard
-      if (window.visualViewport) {
-        function repositionBtn() {
-          var btn = document.getElementById('ob-name-btn');
-          var step = document.getElementById('ob-step2');
-          if (!btn || !step) return;
-          var vvh = window.visualViewport.height;
-          step.style.paddingBottom = (window.innerHeight - vvh + 20) + 'px';
-        }
-        window.visualViewport.addEventListener('resize', repositionBtn);
-        window.visualViewport.addEventListener('scroll', repositionBtn);
-        setTimeout(repositionBtn, 300);
-        nameInp._vpCleanup = function() {
-          window.visualViewport.removeEventListener('resize', repositionBtn);
-          window.visualViewport.removeEventListener('scroll', repositionBtn);
-          var step = document.getElementById('ob-step2');
-          if (step) step.style.paddingBottom = '';
-        };
-      }
+      var step2 = document.getElementById('ob-step2');
+      if (step2) step2.classList.add('active-input');
     };
     nameInp.onblur = function() {
       var obOrb = document.getElementById('ob-orb');
       if (obOrb) obOrb.style.display = '';
+      var step2 = document.getElementById('ob-step2');
+      if (step2) step2.classList.remove('active-input');
       if (nameInp._vpCleanup) { nameInp._vpCleanup(); nameInp._vpCleanup = null; }
     };
     nameInp.onkeydown = function(e) {
