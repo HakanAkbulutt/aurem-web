@@ -1882,18 +1882,8 @@ body::before {
 /* ════════════════════════════════════════
    ONBOARDING
 ════════════════════════════════════════ */
-#ob-step2.active-input {
-  position: fixed !important;
-  bottom: 0; left: 0; right: 0;
-  background: linear-gradient(180deg,#FAF6F0 0%,#F5EDE4 100%);
-  padding: 30px 24px 40px;
-  z-index: 1000;
-  display: flex !important;
-  flex-direction: column;
-  align-items: center;
-  border-radius: 24px 24px 0 0;
-  box-shadow: 0 -8px 30px rgba(180,120,80,.1);
-}
+#onboarding {
+  position:absolute; inset:0; z-index:999;
   background: linear-gradient(180deg,#FAF6F0 0%,#F5EDE4 100%);
   display:flex; flex-direction:column;
   align-items:center; justify-content:center;
@@ -5138,13 +5128,11 @@ function initOnboarding(force) {
       var obOrb = document.getElementById('ob-orb');
       if (obOrb) obOrb.style.display = 'none';
       var step2 = document.getElementById('ob-step2');
-      if (step2) step2.classList.add('active-input');
+      if (step2) step2.classList.remove('active-input');
     };
     nameInp.onblur = function() {
       var obOrb = document.getElementById('ob-orb');
       if (obOrb) obOrb.style.display = '';
-      var step2 = document.getElementById('ob-step2');
-      if (step2) step2.classList.remove('active-input');
       if (nameInp._vpCleanup) { nameInp._vpCleanup(); nameInp._vpCleanup = null; }
     };
     nameInp.onkeydown = function(e) {
