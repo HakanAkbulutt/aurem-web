@@ -1162,6 +1162,129 @@ body::before {
 .sub-icon { font-size:28px; }
 .sub-title { font-size:14px; font-weight:500; color:var(--text-dark); }
 .sub-desc  { font-size:11px; color:var(--text-mid); margin-top:2px; }
+
+/* ── PREMIUM MODAL ─────────────────────────── */
+.pm-backdrop {
+  position:absolute; inset:0;
+  background:rgba(15,10,8,.60);
+  backdrop-filter:blur(8px);
+  -webkit-backdrop-filter:blur(8px);
+  z-index:120;
+  display:none; align-items:flex-end; justify-content:center;
+  border-radius:52px;
+  overflow:hidden;
+}
+.pm-backdrop.open { display:flex; }
+.pm-sheet {
+  width:100%;
+  background:linear-gradient(170deg,#fef8f0 0%,#fdf3e8 100%);
+  border-radius:28px 28px 0 0;
+  padding:0 0 40px 0;
+  transform:translateY(100%);
+  transition:transform .42s cubic-bezier(.28,1,.28,1);
+  box-shadow:0 -8px 40px rgba(80,50,20,.12);
+}
+.pm-backdrop.open .pm-sheet { transform:translateY(0); }
+.pm-handle { width:40px; height:4px; background:rgba(150,120,90,.2); border-radius:2px; margin:14px auto 0; }
+.pm-body { padding:20px 24px 0; }
+
+/* Hero badge */
+.pm-hero {
+  text-align:center; margin-bottom:16px;
+  padding:18px 0 14px;
+  background:linear-gradient(135deg,rgba(196,149,106,.1),rgba(180,120,70,.06));
+  border-radius:20px;
+  border:1px solid rgba(196,149,106,.15);
+}
+.pm-icon { font-size:32px; margin-bottom:6px; }
+.pm-title {
+  font-size:22px; font-weight:700; color:var(--text-dark);
+  letter-spacing:-.3px; margin-bottom:3px;
+}
+.pm-tagline {
+  font-size:12.5px; color:var(--text-soft);
+  letter-spacing:.3px; text-transform:uppercase;
+}
+
+.pm-features { list-style:none; margin-bottom:18px; }
+.pm-features li {
+  font-size:13.5px; color:var(--text-mid);
+  padding:7px 0; display:flex; align-items:center; gap:10px;
+  border-bottom:1px solid rgba(150,120,90,.07);
+}
+.pm-features li:last-child { border-bottom:none; }
+.pm-feat-icon {
+  width:28px; height:28px; border-radius:8px;
+  background:linear-gradient(135deg,rgba(196,149,106,.18),rgba(160,112,72,.1));
+  display:flex; align-items:center; justify-content:center;
+  font-size:14px; flex-shrink:0;
+}
+
+/* Price */
+.pm-price-row {
+  display:flex; align-items:center; justify-content:center;
+  gap:12px; margin-bottom:16px;
+  background:rgba(196,149,106,.07); border-radius:16px; padding:12px;
+}
+.pm-price { font-size:36px; font-weight:800; color:var(--text-dark); letter-spacing:-1px; }
+.pm-price-note { font-size:12px; color:var(--text-soft); line-height:1.5; }
+.pm-price-badge {
+  font-size:10px; font-weight:600; color:#a07848;
+  background:rgba(196,149,106,.15); padding:3px 8px;
+  border-radius:20px; letter-spacing:.4px; text-transform:uppercase;
+}
+
+/* CTA */
+.pm-buy-btn {
+  width:100%; padding:16px; border:none; border-radius:20px;
+  background:linear-gradient(135deg,#c4956a 0%,#a07048 100%);
+  color:#fff; font-size:16px; font-weight:700; cursor:pointer;
+  letter-spacing:.2px; margin-bottom:14px;
+  transition:transform .12s, opacity .12s;
+  box-shadow:0 4px 20px rgba(160,100,50,.28);
+  font-family:var(--font-ui);
+}
+.pm-buy-btn:active { transform:scale(.97); opacity:.9; }
+
+.pm-divider { display:flex; align-items:center; gap:10px; margin-bottom:12px; }
+.pm-divider span { flex:1; height:1px; background:rgba(150,120,90,.12); }
+.pm-divider p { font-size:11px; color:var(--text-soft); white-space:nowrap; }
+
+.pm-key-input {
+  width:100%; padding:13px 15px;
+  border:1.5px solid rgba(150,120,90,.18);
+  border-radius:16px; background:rgba(255,255,255,.8);
+  font-size:14px; color:var(--text-dark); outline:none;
+  font-family:var(--font-ui); margin-bottom:10px;
+  transition:border .2s, box-shadow .2s;
+}
+.pm-key-input:focus {
+  border-color:rgba(196,149,106,.55);
+  box-shadow:0 0 0 3px rgba(196,149,106,.1);
+}
+.pm-activate-btn {
+  width:100%; padding:13px; border:none; border-radius:16px;
+  background:rgba(180,140,100,.1); color:var(--text-mid);
+  font-size:14px; font-weight:500; cursor:pointer;
+  transition:.18s; font-family:var(--font-ui);
+}
+.pm-activate-btn:active { background:rgba(180,140,100,.2); }
+.pm-status {
+  font-size:12px; text-align:center;
+  min-height:20px; margin-top:8px; color:var(--text-soft);
+  transition:color .2s;
+}
+.pm-status.ok { color:#6aaa82; }
+.pm-status.err { color:#c47070; }
+.pm-close-btn {
+  display:block; margin:16px auto 0; background:none; border:none;
+  font-size:13px; color:var(--text-soft); cursor:pointer;
+  font-family:var(--font-ui); padding:4px 16px;
+}
+
+/* Premium active badge in settings */
+.sub-badge-free  { display:inline-block; background:rgba(160,140,120,.12); color:var(--text-soft); font-size:11px; padding:2px 8px; border-radius:20px; }
+.sub-badge-pro   { display:inline-block; background:linear-gradient(90deg,rgba(196,149,106,.22),rgba(160,112,72,.18)); color:#a07848; font-size:11px; padding:2px 8px; border-radius:20px; font-weight:600; }
 .sub-btn {
   margin-left:auto;
   background:rgba(40,30,20,.14);
@@ -2292,7 +2415,7 @@ body::before {
 
       <textarea class="thought-input" id="thoughtInput" placeholder="Düşüncelerini paylaş…" rows="1" autocomplete="off" autocorrect="off" spellcheck="false"></textarea>
 
-      <button class="send-btn" onclick="triggerAI()">
+      <button class="send-btn" onclick="var v=document.getElementById('thoughtInput').value.trim();if(v){handleSend(v);document.getElementById('thoughtInput').value='';document.getElementById('thoughtInput').blur();}">
         <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.8" stroke-linecap="round">
           <path d="M12 19V5M5 12l7-7 7 7"/>
         </svg>
@@ -2614,13 +2737,21 @@ body::before {
     <!-- Subscription -->
     <div class="s-section">
       <p class="s-lbl" id="s-lbl-sub">Abonelik</p>
-      <div class="sub-banner">
-        <span class="sub-icon">🌟</span>
-        <div>
+      <div class="sub-banner" onclick="openPremiumModal()" style="cursor:pointer" id="sub-banner-free">
+        <span class="sub-icon">✦</span>
+        <div style="flex:1">
           <div class="sub-title">Aurem Pro</div>
-          <div class="sub-desc" id="sub-desc">Sınırsız AI analizi ve tüm özellikler</div>
+          <div class="sub-desc" id="sub-desc">AI yanıtları, ses & haftalık analiz</div>
         </div>
-        <button class="sub-btn" id="sub-manage-btn">Yönet</button>
+        <button class="sub-btn" id="sub-manage-btn" onclick="openPremiumModal();event.stopPropagation()">Yükselt</button>
+      </div>
+      <div class="sub-banner" id="sub-banner-pro" style="display:none">
+        <span class="sub-icon">🌟</span>
+        <div style="flex:1">
+          <div class="sub-title">Aurem Pro <span class="sub-badge-pro">✦ Aktif</span></div>
+          <div class="sub-desc">Sınırsız AI analizi ve tüm özellikler</div>
+        </div>
+        <button class="sub-btn" onclick="deactivatePremium()" style="background:rgba(160,130,100,.1);color:var(--text-soft)">Kaldır</button>
       </div>
     </div>
 
@@ -2830,6 +2961,51 @@ body::before {
       <span class="nav-label">Ayarlar</span>
     </div>
   </nav>
+
+  <!-- PREMIUM MODAL — inside phone for correct positioning -->
+  <div class="pm-backdrop" id="premiumModal" onclick="if(event.target===this)closePremiumModal()">
+    <div class="pm-sheet">
+      <div class="pm-handle"></div>
+      <div class="pm-body">
+        <div class="pm-hero">
+          <div class="pm-icon">✦</div>
+          <div class="pm-title">Aurem Pro</div>
+          <div class="pm-tagline">Lifetime · Tek Seferlik</div>
+        </div>
+        <ul class="pm-features">
+          <li>
+            <div class="pm-feat-icon">🤖</div>
+            Claude AI ile kişisel, derinlikli yanıtlar
+          </li>
+          <li>
+            <div class="pm-feat-icon">📊</div>
+            Haftalık ruh hali analizi & pattern keşfi
+          </li>
+          <li>
+            <div class="pm-feat-icon">🔊</div>
+            Sesli okuma — her yanıtı dinle
+          </li>
+          <li>
+            <div class="pm-feat-icon">∞</div>
+            Sınırsız kayıt, reklamsız, sonsuza dek
+          </li>
+        </ul>
+        <div class="pm-price-row">
+          <div class="pm-price">$19</div>
+          <div>
+            <div class="pm-price-note">tek seferlik ödeme</div>
+            <div class="pm-price-badge">ömür boyu erişim</div>
+          </div>
+        </div>
+        <button class="pm-buy-btn" onclick="goToBuyAuremPro()">Satın Al — $19 ✦</button>
+        <div class="pm-divider"><span></span><p>Zaten satın aldın mı?</p><span></span></div>
+        <input class="pm-key-input" id="pm-key-input" placeholder="Lisans anahtarını girin…" type="text" autocomplete="off" />
+        <button class="pm-activate-btn" onclick="activateLicense()">Lisansı Etkinleştir</button>
+        <div class="pm-status" id="pm-status"></div>
+      </div>
+      <button class="pm-close-btn" onclick="closePremiumModal()">Kapat</button>
+    </div>
+  </div>
 
 </div><!-- end phone -->
 
@@ -3050,6 +3226,7 @@ function typeText(elId, text, speed, cb) {
 =========================================== */
 function speak(text) {
   if (!ttsEnabled) return;
+  if (!_isPremium) return;
   if (!window.speechSynthesis) return;
   if (window.requestIdleCallback) requestIdleCallback(function(){ window.speechSynthesis.cancel(); }, { timeout: 80 });
   else setTimeout(function(){ window.speechSynthesis.cancel(); }, 0);
@@ -4314,6 +4491,26 @@ function handleSend(text) {
   // Show loading state
   var T = TRANSLATIONS[_currentLang] || TRANSLATIONS['tr'];
   var loadingMsg = T.ai_thinking || '...';
+
+  // FREE TIER: use smart algorithmic reply
+  if (!_isPremium) {
+    var replyFree = getSmartReply(val, detectedVibe);
+    memAddEntry(detectedVibe, val, replyFree);
+    typeText('greetingContent', replyFree, 36);
+    // Show subtle upsell hint
+    var insightFreeEl = document.getElementById('insightText');
+    if (insightFreeEl) {
+      setTimeout(function() {
+        insightFreeEl.style.opacity = '0.55';
+        insightFreeEl.style.cursor = 'pointer';
+        insightFreeEl.textContent = '✦ AI yanıtları için Pro\'ya yükselt — $19';
+        insightFreeEl.onclick = function() { openPremiumModal(); insightFreeEl.onclick=null; insightFreeEl.style.cursor=''; insightFreeEl.style.opacity=''; };
+        setTimeout(function() { insightFreeEl.textContent = ''; insightFreeEl.style.opacity = ''; insightFreeEl.style.cursor = ''; insightFreeEl.onclick = null; }, 4000);
+      }, 1200);
+    }
+    return;
+  }
+
   typeText('greetingContent', loadingMsg, 40);
   var insightEl = document.getElementById('insightText');
   if (insightEl) insightEl.textContent = '';
@@ -5816,9 +6013,17 @@ function updateJourneyWithRealData() {
     var _ut=TRANSLATIONS[_currentLang]||TRANSLATIONS['tr']; sub.textContent = (_ut.this_week||'Bu hafta')+' '+week.length+' '+(_ut.moods_recorded||'ruh hali kaydedildi')+' ✦';
   }
 
-  // Update insight — real Claude analysis
+  // Update insight — real Claude analysis (Premium only)
   var insight = document.getElementById('journeyInsight');
   if (insight && week.length >= 2) {
+    if (!_isPremium) {
+      insight.textContent = '"Pro\'ya yükselt — haftalık AI analizi için ✦"';
+      insight.style.cursor = 'pointer';
+      insight.onclick = function() { openPremiumModal(); };
+      var metaFree = insight.nextElementSibling;
+      if (metaFree) metaFree.textContent = 'Aurem Pro özelliği';
+      return;
+    }
     var vibeCounts = {};
     week.forEach(function(e){ vibeCounts[e.vibe] = (vibeCounts[e.vibe]||0)+1; });
     var sorted = Object.keys(vibeCounts).sort(function(a,b){ return vibeCounts[b]-vibeCounts[a]; });
@@ -5942,6 +6147,85 @@ setTimeout(function() {
   }
 }, 500);
 } catch(e) { /* silent */ }
+
+/* ════════════════════════════════════════
+   PREMIUM / PAYWALL
+════════════════════════════════════════ */
+var _isPremium = false;
+var GUMROAD_PRODUCT = 'aurem-pro'; // update with your Gumroad product permalink
+
+(function() {
+  try {
+    var k = localStorage.getItem('aurem_license');
+    if (k) { _isPremium = true; updatePremiumUI(); }
+  } catch(e) {}
+})();
+
+function updatePremiumUI() {
+  var free = document.getElementById('sub-banner-free');
+  var pro  = document.getElementById('sub-banner-pro');
+  var profPlan = document.getElementById('prof-plan-el');
+  if (free) free.style.display = _isPremium ? 'none' : '';
+  if (pro)  pro.style.display  = _isPremium ? '' : 'none';
+  if (profPlan) {
+    var T = TRANSLATIONS[_currentLang] || TRANSLATIONS['tr'];
+    profPlan.textContent = _isPremium ? (T.prof_plan || 'Aurem Pro ✦ Aktif') : 'Ücretsiz Plan';
+  }
+}
+
+function openPremiumModal() {
+  var m = document.getElementById('premiumModal');
+  if (m) { m.classList.add('open'); }
+}
+function closePremiumModal() {
+  var m = document.getElementById('premiumModal');
+  if (m) { m.classList.remove('open'); }
+  var s = document.getElementById('pm-status');
+  if (s) s.textContent = '';
+  var inp = document.getElementById('pm-key-input');
+  if (inp) inp.value = '';
+}
+
+function goToBuyAuremPro() {
+  window.open('https://getaurem.gumroad.com/l/aurem-pro', '_blank');
+}
+
+function activateLicense() {
+  var inp = document.getElementById('pm-key-input');
+  var status = document.getElementById('pm-status');
+  var key = inp ? inp.value.trim() : '';
+  if (!key) { if (status) status.textContent = 'Lütfen bir lisans anahtarı girin.'; return; }
+  if (status) status.textContent = 'Doğrulanıyor...';
+
+  fetch('https://api.gumroad.com/v2/licenses/verify', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: 'product_permalink=' + encodeURIComponent(GUMROAD_PRODUCT) + '&license_key=' + encodeURIComponent(key) + '&increment_uses_count=false'
+  })
+  .then(function(r) { return r.json(); })
+  .then(function(data) {
+    if (data.success) {
+      _isPremium = true;
+      try { localStorage.setItem('aurem_license', key); } catch(e) {}
+      updatePremiumUI();
+      if (status) { status.textContent = '✓ Aurem Pro aktif!'; status.className = 'pm-status ok'; }
+      setTimeout(closePremiumModal, 1400);
+    } else {
+      if (status) { status.textContent = 'Geçersiz anahtar. Lütfen kontrol edin.'; status.className = 'pm-status err'; }
+    }
+  })
+  .catch(function() {
+    if (status) { status.textContent = 'Bağlantı hatası. Lütfen tekrar deneyin.'; status.className = 'pm-status err'; }
+  });
+}
+
+function deactivatePremium() {
+  if (!confirm('Aurem Pro\'yu bu cihazdan kaldırmak istiyor musunuz?')) return;
+  _isPremium = false;
+  try { localStorage.removeItem('aurem_license'); } catch(e) {}
+  updatePremiumUI();
+}
 </script>
+
 </body>
 </html>
