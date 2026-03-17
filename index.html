@@ -5064,6 +5064,7 @@ function editName() {
 ════════════════════════════════════════ */
 var _obVibe = 'default';
 var _obName = '';
+var _isPremium = false; // declared early so updateTrialBadge can reference it
 var _obDone = false;
 
 function initOnboarding(force) {
@@ -6223,15 +6224,20 @@ setTimeout(function() {
 /* ════════════════════════════════════════
    PREMIUM / PAYWALL
 ════════════════════════════════════════ */
-var _isPremium = false;
 var GUMROAD_PRODUCT = 'aurem-pro';
 
 (function() {
   try {
     var k = localStorage.getItem('aurem_license');
-    if (k) { _isPremium = true; updatePremiumUI(); }
+    if (k) { _isPremium = true; }
   } catch(e) {}
 })();
+
+// Init premium UI after DOM is ready
+setTimeout(function() {
+  updatePremiumUI();
+  updateTrialBadge();
+}, 800);
 
 function updatePremiumUI() {
   var free = document.getElementById('sub-banner-free');
