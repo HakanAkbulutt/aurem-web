@@ -1282,7 +1282,23 @@ body::before {
   font-family:var(--font-ui); padding:4px 16px;
 }
 
-/* Premium active badge in settings */
+/* ── TRIAL BADGE ─────────────────────────── */
+#trial-badge {
+  display:none;
+  text-align:center;
+  font-size:11px;
+  color:var(--text-soft);
+  padding:4px 12px;
+  margin:0 20px 6px;
+  background:rgba(196,149,106,.08);
+  border-radius:20px;
+  border:1px solid rgba(196,149,106,.14);
+  font-weight:500;
+  flex-shrink:0;
+  cursor:default;
+}
+
+/* Premium badge in settings */
 .sub-badge-free  { display:inline-block; background:rgba(160,140,120,.12); color:var(--text-soft); font-size:11px; padding:2px 8px; border-radius:20px; }
 .sub-badge-pro   { display:inline-block; background:linear-gradient(90deg,rgba(196,149,106,.22),rgba(160,112,72,.18)); color:#a07848; font-size:11px; padding:2px 8px; border-radius:20px; font-weight:600; }
 .sub-btn {
@@ -2609,7 +2625,7 @@ body::before {
       <div class="avatar" id="profAvatar">H</div>
       <div>
         <div class="prof-name" id="profName">Hakan</div>
-        <div class="prof-plan" id="prof-plan-el">Aurem Pro ✦ Aktif</div>
+        <div class="prof-plan" id="prof-plan-el">Ücretsiz Plan · 3 deneme</div>
       </div>
       <button class="prof-edit" id="prof-edit-btn" onclick="editName()">Düzenle</button>
     </div>
@@ -2935,6 +2951,9 @@ body::before {
 
 
   </div><!-- /screenContainer -->
+  <!-- Trial Badge — sits above bottom nav -->
+  <div id="trial-badge"></div>
+
   <nav class="bottom-nav">
     <div class="nav-item" id="nav-journey" onclick="showTab('journey')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round">
@@ -2970,7 +2989,7 @@ body::before {
         <div class="pm-hero">
           <div class="pm-icon">✦</div>
           <div class="pm-title">Aurem Pro</div>
-          <div class="pm-tagline">Lifetime · Tek Seferlik</div>
+          <div class="pm-tagline">3 ücretsiz deneme · Sonra $19 lifetime</div>
         </div>
         <ul class="pm-features">
           <li>
@@ -3226,7 +3245,6 @@ function typeText(elId, text, speed, cb) {
 =========================================== */
 function speak(text) {
   if (!ttsEnabled) return;
-  if (!_isPremium) return;
   if (!window.speechSynthesis) return;
   if (window.requestIdleCallback) requestIdleCallback(function(){ window.speechSynthesis.cancel(); }, { timeout: 80 });
   else setTimeout(function(){ window.speechSynthesis.cancel(); }, 0);
@@ -4492,22 +4510,15 @@ function handleSend(text) {
   var T = TRANSLATIONS[_currentLang] || TRANSLATIONS['tr'];
   var loadingMsg = T.ai_thinking || '...';
 
-  // FREE TIER: use smart algorithmic reply
-  if (!_isPremium) {
-    var replyFree = getSmartReply(val, detectedVibe);
-    memAddEntry(detectedVibe, val, replyFree);
-    typeText('greetingContent', replyFree, 36);
-    // Show subtle upsell hint
-    var insightFreeEl = document.getElementById('insightText');
-    if (insightFreeEl) {
-      setTimeout(function() {
-        insightFreeEl.style.opacity = '0.55';
-        insightFreeEl.style.cursor = 'pointer';
-        insightFreeEl.textContent = '✦ AI yanıtları için Pro\'ya yükselt — $19';
-        insightFreeEl.onclick = function() { openPremiumModal(); insightFreeEl.onclick=null; insightFreeEl.style.cursor=''; insightFreeEl.style.opacity=''; };
-        setTimeout(function() { insightFreeEl.textContent = ''; insightFreeEl.style.opacity = ''; insightFreeEl.style.cursor = ''; insightFreeEl.onclick = null; }, 4000);
-      }, 1200);
-    }
+  // FREE TRIAL: first 3 messages get real AI
+  var _aiUsed = 0;
+  try { _aiUsed = parseInt(localStorage.getItem('aurem_ai_used') || '0'); } catch(e) {}
+
+  if (!_isPremium && _aiUsed >= 3) {
+    // Trial exhausted — open paywall immediately
+    openPremiumModal();
+    // Reset orb animation
+    orbAnimating = false;
     return;
   }
 
@@ -4556,6 +4567,30 @@ function handleSend(text) {
 
     // Strip quotes if model wrapped in them
     reply = reply.replace(/^["'""]|["'""]$/g, '').trim();
+
+    // Increment free trial counter
+    if (!_isPremium) {
+      try {
+        var used = parseInt(localStorage.getItem('aurem_ai_used') || '0');
+        localStorage.setItem('aurem_ai_used', used + 1);
+        updateTrialBadge();
+        // Show remaining hint after 1st and 2nd use
+        if (used + 1 < 3) {
+          var remaining = 3 - (used + 1);
+          var insightHint = document.getElementById('insightText');
+          if (insightHint) {
+            setTimeout(function() {
+              insightHint.style.opacity = '0.5';
+              insightHint.textContent = remaining + ' ücretsiz AI hakkın kaldı ✦';
+              setTimeout(function() {
+                insightHint.style.opacity = '';
+                insightHint.textContent = '';
+              }, 3500);
+            }, 2000);
+          }
+        }
+      } catch(e) {}
+    }
 
     memAddEntry(detectedVibe, val, reply);
     typeText('greetingContent', reply, 36, function() {
@@ -5457,10 +5492,37 @@ var _origSelectVibe = null;
 setTimeout(function() {
   var _sv = window.selectVibe;
   window.selectVibe = function(el, vibe) {
+    // Block vibe selection if trial exhausted and not premium
+    var _aiUsed2 = 0;
+    try { _aiUsed2 = parseInt(localStorage.getItem('aurem_ai_used') || '0'); } catch(e) {}
+    if (!_isPremium && _aiUsed2 >= 3) {
+      openPremiumModal();
+      return;
+    }
     _currentVibe = vibe;
     _sv(el, vibe);
   };
 }, 900);
+
+// Show trial counter on home screen
+function updateTrialBadge() {
+  if (_isPremium) return;
+  var used = 0;
+  try { used = parseInt(localStorage.getItem('aurem_ai_used') || '0'); } catch(e) {}
+  var remaining = Math.max(0, 3 - used);
+  var badge = document.getElementById('trial-badge');
+  if (!badge) return;
+  if (remaining > 0) {
+    badge.textContent = remaining + ' ücretsiz AI hakkı kaldı ✦';
+    badge.style.display = 'block';
+  } else {
+    badge.textContent = 'Ücretsiz haklar bitti — Pro\'ya yükselt ✦';
+    badge.style.display = 'block';
+    badge.style.cursor = 'pointer';
+    badge.onclick = function() { openPremiumModal(); };
+  }
+}
+setTimeout(updateTrialBadge, 800);
 
 /* ═══════════════════════════════════════════
    TRANSLATION SYSTEM — 9 LANGUAGES
@@ -5566,7 +5628,7 @@ function applyLang(code) {
   }
 
   // ── SETTINGS — PROFILE CARD ──────────────────────
-  setText('prof-plan-el',  t.prof_plan);
+  setText('prof-plan-el',  _isPremium ? (t.prof_plan || 'Aurem Pro ✦ Aktif') : 'Ücretsiz Plan · 3 deneme');
   setText('prof-edit-btn', t.prof_edit);
 
   // ── SETTINGS — SECTIONS ──────────────────────────
@@ -6140,10 +6202,20 @@ var _obCompletedThisSession = false;
 setTimeout(function() {
   if (_obCompletedThisSession) return;
   var hasName = false;
-  try { hasName = !!(localStorage.getItem('aurem_name')); } catch(e) {}
-  // Show onboarding if no name saved OR if this is a fresh artifact load
+  var savedName = '';
+  try { savedName = localStorage.getItem('aurem_name') || ''; hasName = !!savedName; } catch(e) {}
   if (!hasName) {
+    // First time user — full onboarding
     initOnboarding(true);
+  } else {
+    // Returning user — show "X olarak devam et?" screen directly
+    var ob = document.getElementById('onboarding');
+    if (!ob) return;
+    ob.style.display = 'flex';
+    var hs = document.getElementById('homeScreen');
+    if (hs) hs.style.visibility = 'hidden';
+    obInitReturningStep();
+    obGoStep('r');
   }
 }, 500);
 } catch(e) { /* silent */ }
@@ -6165,12 +6237,15 @@ function updatePremiumUI() {
   var free = document.getElementById('sub-banner-free');
   var pro  = document.getElementById('sub-banner-pro');
   var profPlan = document.getElementById('prof-plan-el');
+  var badge = document.getElementById('trial-badge');
   if (free) free.style.display = _isPremium ? 'none' : '';
   if (pro)  pro.style.display  = _isPremium ? '' : 'none';
+  if (badge) badge.style.display = _isPremium ? 'none' : '';
   if (profPlan) {
     var T = TRANSLATIONS[_currentLang] || TRANSLATIONS['tr'];
-    profPlan.textContent = _isPremium ? (T.prof_plan || 'Aurem Pro ✦ Aktif') : 'Ücretsiz Plan';
+    profPlan.textContent = _isPremium ? (T.prof_plan || 'Aurem Pro ✦ Aktif') : 'Ücretsiz Plan · 3 deneme';
   }
+  if (!_isPremium) updateTrialBadge();
 }
 
 function openPremiumModal() {
