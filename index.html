@@ -4549,6 +4549,26 @@ function handleSend(text) {
     '5. Asla "Anlıyorum", "Tabii ki", "Harika" gibi başlama. ' +
     '6. Yanıtın başında veya sonunda hiçbir ek açıklama yapma.';
 
+  // Increment free trial counter BEFORE fetch
+  if (!_isPremium) {
+    try {
+      var _usedNow = parseInt(localStorage.getItem('aurem_ai_used') || '0');
+      localStorage.setItem('aurem_ai_used', _usedNow + 1);
+      updateTrialBadge();
+      if (_usedNow + 1 < 3) {
+        var _remaining = 3 - (_usedNow + 1);
+        setTimeout(function() {
+          var insightHint = document.getElementById('insightText');
+          if (insightHint) {
+            insightHint.style.opacity = '0.5';
+            insightHint.textContent = _remaining + ' ücretsiz AI hakkın kaldı ✦';
+            setTimeout(function() { insightHint.style.opacity = ''; insightHint.textContent = ''; }, 3500);
+          }
+        }, 2000);
+      }
+    } catch(e) {}
+  }
+
   fetch('https://api.anthropic.com/v1/messages', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -4567,30 +4587,6 @@ function handleSend(text) {
 
     // Strip quotes if model wrapped in them
     reply = reply.replace(/^["'""]|["'""]$/g, '').trim();
-
-    // Increment free trial counter
-    if (!_isPremium) {
-      try {
-        var used = parseInt(localStorage.getItem('aurem_ai_used') || '0');
-        localStorage.setItem('aurem_ai_used', used + 1);
-        updateTrialBadge();
-        // Show remaining hint after 1st and 2nd use
-        if (used + 1 < 3) {
-          var remaining = 3 - (used + 1);
-          var insightHint = document.getElementById('insightText');
-          if (insightHint) {
-            setTimeout(function() {
-              insightHint.style.opacity = '0.5';
-              insightHint.textContent = remaining + ' ücretsiz AI hakkın kaldı ✦';
-              setTimeout(function() {
-                insightHint.style.opacity = '';
-                insightHint.textContent = '';
-              }, 3500);
-            }, 2000);
-          }
-        }
-      } catch(e) {}
-    }
 
     memAddEntry(detectedVibe, val, reply);
     typeText('greetingContent', reply, 36, function() {
