@@ -1887,7 +1887,8 @@ body::before {
   background: linear-gradient(180deg,#FAF6F0 0%,#F5EDE4 100%);
   display:flex; flex-direction:column;
   align-items:center; justify-content:center;
-  overflow:hidden;
+  overflow-y:auto;
+  -webkit-overflow-scrolling:touch;
 }
 #ob-atmBg {
   position:absolute; inset:0; pointer-events:none;
@@ -2343,8 +2344,8 @@ body::before {
     <!-- Step 2: Name -->
     <div class="ob-step" id="ob-step2" style="display:none">
       <p class="ob-title" id="ob-title-2">Sana nasıl hitap edeyim?</p>
-      <input id="ob-name-input" class="ob-input" type="text" placeholder="Adın nedir?" maxlength="24" autocomplete="off" />
-      <button class="ob-btn" id="ob-name-btn">Devam →</button>
+      <input id="ob-name-input" class="ob-input" type="text" placeholder="Adın nedir?" maxlength="24" autocomplete="off" inputmode="text" enterkeyhint="done" />
+      <button class="ob-btn" id="ob-name-btn" style="margin-top:16px;">Devam →</button>
     </div>
     <!-- Step 3: First mood -->
     <div class="ob-step" id="ob-step3" style="display:none">
@@ -5123,6 +5124,12 @@ function initOnboarding(force) {
   }
   if (nameInp) {
     nameInp.onclick = function(e) { e.stopPropagation(); };
+    nameInp.onfocus = function() {
+      setTimeout(function() {
+        var btn = document.getElementById('ob-name-btn');
+        if (btn) btn.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }, 400);
+    };
     nameInp.onkeydown = function(e) {
       if (e.key === 'Enter' || e.keyCode === 13) { if (nameBtn) nameBtn.onclick(e); }
     };
