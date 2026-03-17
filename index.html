@@ -6,7 +6,7 @@
 window.addEventListener('unhandledrejection',function(e){e.preventDefault();});
 window.onerror=function(){return true;};
 </script>
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, interactive-widget=resizes-content">
 <title>Aurem</title>
 <!-- PWA -->
 <link rel="manifest" href="/manifest.json">
@@ -2345,7 +2345,7 @@ body::before {
     <div class="ob-step" id="ob-step2" style="display:none">
       <p class="ob-title" id="ob-title-2">Sana nasıl hitap edeyim?</p>
       <input id="ob-name-input" class="ob-input" type="text" placeholder="Adın nedir?" maxlength="24" autocomplete="off" inputmode="text" enterkeyhint="done" />
-      <button class="ob-btn" id="ob-name-btn" style="margin-top:16px;">Devam →</button>
+      <button class="ob-btn" id="ob-name-btn" style="margin-top:12px;">Devam →</button>
     </div>
     <!-- Step 3: First mood -->
     <div class="ob-step" id="ob-step3" style="display:none">
@@ -5125,17 +5125,32 @@ function initOnboarding(force) {
   if (nameInp) {
     nameInp.onclick = function(e) { e.stopPropagation(); };
     nameInp.onfocus = function() {
-      // Hide orb on mobile to make room for keyboard
       var obOrb = document.getElementById('ob-orb');
       if (obOrb) obOrb.style.display = 'none';
-      setTimeout(function() {
-        var btn = document.getElementById('ob-name-btn');
-        if (btn) btn.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      }, 350);
+      // Use visualViewport to reposition button above keyboard
+      if (window.visualViewport) {
+        function repositionBtn() {
+          var btn = document.getElementById('ob-name-btn');
+          var step = document.getElementById('ob-step2');
+          if (!btn || !step) return;
+          var vvh = window.visualViewport.height;
+          step.style.paddingBottom = (window.innerHeight - vvh + 20) + 'px';
+        }
+        window.visualViewport.addEventListener('resize', repositionBtn);
+        window.visualViewport.addEventListener('scroll', repositionBtn);
+        setTimeout(repositionBtn, 300);
+        nameInp._vpCleanup = function() {
+          window.visualViewport.removeEventListener('resize', repositionBtn);
+          window.visualViewport.removeEventListener('scroll', repositionBtn);
+          var step = document.getElementById('ob-step2');
+          if (step) step.style.paddingBottom = '';
+        };
+      }
     };
     nameInp.onblur = function() {
       var obOrb = document.getElementById('ob-orb');
       if (obOrb) obOrb.style.display = '';
+      if (nameInp._vpCleanup) { nameInp._vpCleanup(); nameInp._vpCleanup = null; }
     };
     nameInp.onkeydown = function(e) {
       if (e.key === 'Enter' || e.keyCode === 13) { if (nameBtn) nameBtn.onclick(e); }
